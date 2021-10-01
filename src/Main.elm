@@ -9,7 +9,11 @@ import Html.Events exposing (onClick)
 
 
 ---- MODEL ----
-
+type alias Model =
+    { board : Array Masu
+    , turn : Player
+    , status : Status
+    }
 
 type Player
     = Maru
@@ -26,12 +30,7 @@ type Masu
     | Blank
 
 
-type alias Model =
-    { board : Array Masu
-    , turn : Player
-    , status : Status
-    }
-
+---- INIT ----
 
 init : ( Model, Cmd Msg )
 init =
@@ -41,7 +40,7 @@ init =
                 , Blank
                 , Blank
                 , Blank
-                , Used Batu
+                , Blank
                 , Blank
                 , Blank
                 , Blank
@@ -53,11 +52,55 @@ init =
     , Cmd.none
     )
 
+---- VIEW ----
+view : Model -> Html Msg
+view model =
+    div []
+        [ h1 [] [(text ( winer_str model.status) )]
+        , div [] [ square_button 0 model, square_button 1 model, square_button 2 model ]
+        , div [] [ square_button 3 model, square_button 4 model, square_button 5 model ]
+        , div [] [ square_button 6 model, square_button 7 model, square_button 8 model ]
+        , text (player_str model.turn ++ "のターン")
+        ]
 
+winer_str : Status -> String
+winer_str status =
+    case status of
+        Gaming ->
+            "頑張るぞい"
+        GameEnd player ->
+            player_str player ++ "の勝ち！！"
+
+player_str : Player -> String
+player_str player =
+    case player of
+        Maru ->
+            "○"
+
+        Batu ->
+            "×"
+
+
+square_button : Int -> Model -> Html Msg
+square_button zahyou model =
+    let
+        masu_moji =
+            case Array.get zahyou model.board of
+                Just Blank ->
+                    "-"
+
+                Just (Used Maru) ->
+                    "○"
+
+                Just (Used Batu) ->
+                    "×"
+
+                Nothing ->
+                    "?"
+    in
+    button [ onClick (Put zahyou) ] [ text masu_moji ]
 
 ---- UPDATE ----
-
-
 type Msg
     = Put Int
 
@@ -158,58 +201,6 @@ board_process zahyou model =
             )
             (List.range 0 8)
         )
-
-
-
----- VIEW ----
-
-
-view : Model -> Html Msg
-view model =
-    div []
-        [ h1 [] [(text ( winer_str model.status) )]
-        , div [] [ square_button 0 model, square_button 1 model, square_button 2 model ]
-        , div [] [ square_button 3 model, square_button 4 model, square_button 5 model ]
-        , div [] [ square_button 6 model, square_button 7 model, square_button 8 model ]
-        , text (player_str model.turn ++ "のターン")
-        ]
-
-winer_str : Status -> String
-winer_str status =
-    case status of
-        Gaming ->
-            "頑張るぞい"
-        GameEnd player ->
-            player_str player ++ "の勝ち！！"
-
-player_str : Player -> String
-player_str player =
-    case player of
-        Maru ->
-            "○"
-
-        Batu ->
-            "×"
-
-
-square_button : Int -> Model -> Html Msg
-square_button zahyou model =
-    let
-        masu_moji =
-            case Array.get zahyou model.board of
-                Just Blank ->
-                    "-"
-
-                Just (Used Maru) ->
-                    "○"
-
-                Just (Used Batu) ->
-                    "×"
-
-                Nothing ->
-                    "?"
-    in
-    button [ onClick (Put zahyou) ] [ text masu_moji ]
 
 
 
