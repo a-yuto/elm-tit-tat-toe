@@ -6,8 +6,6 @@ import Html exposing (Html,h1, button, div, text)
 import Html.Attributes exposing (src)
 import Html.Events exposing (onClick)
 
-
-
 ---- MODEL ----
 type alias Model =
     { board : Array Masu
@@ -100,6 +98,7 @@ square_button zahyou model =
     in
     button [ onClick (Put zahyou) ] [ text masu_moji ]
 
+
 ---- UPDATE ----
 type Msg
     = Put Int
@@ -131,7 +130,7 @@ update msg model =
             , Cmd.none
             )
 
-
+-- クソコード閲覧注意!!!
 judge_win : Array Masu -> Status
 judge_win board =
     let
